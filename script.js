@@ -1,14 +1,14 @@
 /* ===========================
-   Sloth Studio — Scripts
+   Sloth Studio — Retro Scripts
    =========================== */
 
-// ── Starfield background ──────────────────────────────
+// ── Retro starfield ──────────────────────────────────
 (function starfield() {
   const canvas = document.getElementById('stars');
   const ctx = canvas.getContext('2d');
 
   let stars = [];
-  const STAR_COUNT = 120;
+  const STAR_COUNT = 100;
 
   function resize() {
     canvas.width = window.innerWidth;
@@ -21,10 +21,10 @@
       stars.push({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
-        r: Math.random() * 1.5 + 0.4,
-        a: Math.random() * 0.6 + 0.1,
-        speed: Math.random() * 0.02 + 0.005,
-        flicker: Math.random() * Math.PI * 2,
+        size: Math.floor(Math.random() * 3) + 1,
+        speed: Math.random() * 0.3 + 0.1,
+        opacity: Math.random() * 0.4 + 0.2,
+        color: Math.random() < 0.15 ? '#ff2d95' : Math.random() < 0.3 ? '#0ff' : '#ffffff',
       });
     }
   }
@@ -33,13 +33,20 @@
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     for (const s of stars) {
-      s.flicker += s.speed;
-      const alpha = s.a + Math.sin(s.flicker) * 0.2;
-      ctx.beginPath();
-      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(200, 200, 255, ${Math.max(0, Math.min(1, alpha))})`;
-      ctx.fill();
+      s.y += s.speed;
+      if (s.y > canvas.height + 5) {
+        s.y = -5;
+        s.x = Math.random() * canvas.width;
+      }
+
+      ctx.fillStyle = s.color;
+      ctx.globalAlpha = s.opacity;
+
+      // Draw square "pixel" stars
+      ctx.fillRect(s.x, s.y, s.size, s.size);
     }
+
+    ctx.globalAlpha = 1;
     requestAnimationFrame(draw);
   }
 
